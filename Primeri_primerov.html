@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тренажёр сложения</title>
+
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f7f9fc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #333;
+    }
+    .box {
+      background: white;
+      padding: 40px 50px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      min-width: 360px;
+    }
+    h1 {
+      margin: 0 0 30px 0;
+      font-size: 28px;
+      color: #444;
+    }
+    .task {
+      font-size: 60px;
+      font-weight: bold;
+      margin: 30px 0;
+      color: #222;
+    }
+    input {
+      font-size: 32px;
+      width: 160px;
+      padding: 10px;
+      text-align: center;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      margin: 15px 8px;
+      padding: 10px 20px;
+      font-size: 18px;
+      background: #4361ee;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover { background: #3a56d4; }
+    .msg {
+      margin: 20px 0;
+      font-size: 26px;
+      font-weight: bold;
+      min-height: 40px;
+    }
+    .correct { color: #2d9d2d; }
+    .wrong { color: #d32f2f; }
+    .stats {
+      margin-top: 30px;
+      padding: 15px;
+      background: #f0f4ff;
+      border-radius: 8px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script>
+const { useState, useEffect } = React;
+
+function App() {
+  const [a, setA] = useState(10);
+  const [b, setB] = useState(20);
+  const [input, setInput] = useState("");
+  const [msg, setMsg] = useState("");
+  const [correct, setCorrect] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [best, setBest] = useState(0);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("bestScore");
+    if (saved) setBest(+saved);
+    newTask();
+  }, []);
+
+  const newTask = () => {
+    setA(Math.floor(Math.random() * 90) + 10);
+    setB(Math.floor(Math.random() * 90) + 10);
+    setInput("");
+    setMsg("");
+  };
+
+  const check = () => {
+    const answer = +input;
+    if (isNaN(answer)) return;
+
+    const ok = a + b === answer;
+    setTotal(t => t + 1);
+    if (ok) setCorrect(c => c + 1);
+
+    setMsg(ok ? "Правильно!" : `Неверно! ${a} + ${b} = ${a + b}`);
+
+    if (ok) setTimeout(newTask, 800);
+
+    // Лучший результат
+    const percent = Math.round((correct + (ok ? 1 : 0)) / (total + 1) * 100);
+    if (percent > best) {
+      setBest(percent);
+      localStorage.setItem("bestScore", percent);
+    }
+  };
+
+  return React.createElement("div", { className: "box" },
+    React.createElement("h1", null, "Тренажёр сложения"),
+    React.createElement("div", { className: "task" }, `${a} + ${b} = ?`),
+    
+    React.createElement("div", null,
+      React.createElement("input", {
+        value: input,
+        onChange: e => setInput(e.target.value),
+        onKeyDown: e => e.key === "Enter" && check(),
+        autoFocus: true
+      }),
+      React.createElement("button", { onClick: check }, "Проверить")
+    ),
+
+    React.createElement("div", { 
+      className: `msg ${msg.includes("Правильно") ? "correct" : "wrong"}` 
+    }, msg),
+
+    React.createElement("div", { className: "stats" },
+      React.createElement("div", null, `Правильно: ${correct} из ${total}`),
+      React.createElement("div", null, `Точность: ${total ? Math.round(correct/total*100) : 0}%`),
+      React.createElement("div", null, `Лучший результат: ${best}%`)
+    ),
+
+    React.createElement("button", { onClick: newTask }, "Новый пример")
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+</script>
+
+</body>
+</html>
