@@ -24,7 +24,6 @@
 - Один HTML-файл, без внешних зависимостей
 
 - <img width="619" height="736" alt="image" src="https://github.com/user-attachments/assets/d9eb5391-319e-45ea-9b59-2b81662055e4" />
-<img width="605" height="721" alt="image" src="https://github.com/user-attachments/assets/9ac82946-d69e-42bd-adcd-935a1c11cdaa" />
 
 <img width="604" height="728" alt="image" src="https://github.com/user-attachments/assets/ac0a4874-8354-40ec-a2e1-1bf1a27b53c5" />
 
